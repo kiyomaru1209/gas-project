@@ -32,11 +32,29 @@ jobs:
       - name: Setup clasp
         run: |
           npm install -g @google/clasp
+          # ~/.clasprc.json に認証情報を保存
           echo '${{ secrets.CLASP_TOKEN }}' > ~/.clasprc.json
-          echo '{"scriptId":"13_EQB_VSmMqXgV-VCUyYFIS3pn0RvWVEhEm2KSfrMZ7K2sUxTYStC7WO","rootDir":"."}' > .clasp.json
 
       - name: Push to Google Apps Script
-        run: npm run push
+        env:
+          SCRIPT_ID: "13_EQB_VSmMqXgV-VCUyYFIS3pn0RvWVEhEm2KSfrMZ7K2sUxTYStC7WO"
+        run: |
+          # ローカルの.clasp.jsonの内容を確認
+          cat .clasp.json || echo ".clasp.json not found"
+
+          # スクリプトIDを設定
+          echo '{"scriptId":"'"$SCRIPT_ID"'","rootDir":"."}' > .clasp.json
+
+          # 認証ファイルを確認
+          ls -la ~ | grep .clasprc.json
+
+          # クレデンシャルを使用してclasp push実行
+          npm run push
 
       - name: Notify success
+        if: success()
         run: echo "Successfully pushed to Google Apps Script at $(date)"
+
+      - name: Notify failure
+        if: failure()
+        run: echo "Failed to push to Google Apps Script"
