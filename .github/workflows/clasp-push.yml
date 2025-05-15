@@ -32,8 +32,8 @@ jobs:
       - name: Setup clasp
         run: |
           npm install -g @google/clasp
-          mkdir -p ~/.config/clasp
-          echo '${{ secrets.CLASP_TOKEN }}' > ~/.config/clasp/credentials.json
+          # ~/.clasprc.json に認証情報を保存
+          echo '${{ secrets.CLASP_TOKEN }}' > ~/.clasprc.json
 
       - name: Push to Google Apps Script
         env:
@@ -46,7 +46,7 @@ jobs:
           echo '{"scriptId":"'"$SCRIPT_ID"'","rootDir":"."}' > .clasp.json
 
           # 認証ファイルを確認
-          ls -la ~/.config/clasp/
+          ls -la ~ | grep .clasprc.json
 
           # クレデンシャルを使用してclasp push実行
           npm run push
