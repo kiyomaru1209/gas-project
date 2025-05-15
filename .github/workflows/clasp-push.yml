@@ -13,7 +13,7 @@ on:
 
 jobs:
   clasp-push:
-    # PRがマージされた場合または直接mainまたはdevelopにpushされた場合に実行
+    # PRがマージされた場合または直接mainまたはdevelopにpushされた場合のみ実行
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     steps:
@@ -39,4 +39,4 @@ jobs:
         run: npm run push
 
       - name: Notify success
-        run: echo "Successfully pushed to Google Apps Script"
+        run: echo "Successfully pushed to Google Apps Script at $(date)"
