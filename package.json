@@ -1,0 +1,24 @@
+{
+  "name": "gas-project",
+  "version": "1.0.0",
+  "description": "Google Apps Script project with clasp",
+  "main": "index.js",
+  "scripts": {
+    "login": "clasp login",
+    "create": "clasp create --title \"New GAS Project\"",
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "clone": "clasp clone",
+    "open": "clasp open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/gas-project.git"
+  },
+  "keywords": [
+    "google-apps-script",
+    "clasp"
+  ],
+  "author": "",
+  "license": "MIT"
+}
