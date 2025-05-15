@@ -1,0 +1,54 @@
+name: Create PR after clasp push
+
+on:
+  # 新しいブランチが作成されたときに実行
+  create:
+    branches:
+      - "**"
+  # clasp pushに相当するpushイベント
+  push:
+    branches:
+      - "**"
+      - "!main"
+      - "!master"
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    # main/masterブランチへのプッシュでない場合のみ実行
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup clasp
+        run: |
+          npm install -g @google/clasp
+          echo '${{ secrets.CLASP_TOKEN }}' > ~/.clasprc.json
+          echo '{"scriptId":"13_EQB_VSmMqXgV-VCUyYFIS3pn0RvWVEhEm2KSfrMZ7K2sUxTYStC7WO","rootDir":"."}' > .clasp.json
+
+      - name: Push to Google Apps Script
+        run: npm run push
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update Google Apps Script project
+          title: "[Auto] Update from ${{ github.ref_name }}"
+          body: |
+            このPRは自動的に作成されました。
+
+            ブランチ: ${{ github.ref_name }}
+            コミット: ${{ github.sha }}
+          branch: ${{ github.ref_name }}
+          base: main
